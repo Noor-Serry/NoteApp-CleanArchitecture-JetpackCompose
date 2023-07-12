@@ -24,7 +24,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -38,16 +40,17 @@ import com.example.note.presentation.theme.Gray
 import com.example.note.presentation.theme.IconColor
 import com.example.note.presentation.theme.NotedText
 import com.example.note.presentation.theme.TransparentColor
+import com.example.note.presentation.utils.TestTags.BODY_TEXT_FIELD
+import com.example.note.presentation.utils.TestTags.TITlE_TEXT_FIELD
 
 @Composable
 fun AddEditScreen(
     viewModel: AddEditViewModel = hiltViewModel(), navHostController: NavHostController
 ) {
-    val stateSave = viewModel.stateSave.collectAsState()
-    val stateTitle = viewModel.stateTitle.collectAsState()
-    val stateBody = viewModel.stateBody.collectAsState()
+    val state = viewModel.state.collectAsState()
+
     AddEditContent(
-        stateSave = stateSave, stateTitle = stateTitle, stateBody = stateBody, viewModel
+        state = state, viewModel = viewModel
     ) { navHostController.popBackStack() }
 
 }
@@ -56,9 +59,7 @@ fun AddEditScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddEditContent(
-    stateSave: State<SaveNoteState?>,
-    stateTitle: State<String>,
-    stateBody: State<String>,
+    state: State<AddEditState>,
     viewModel: AddEditViewModel,
     onBackClick: () -> Unit
 ) {
@@ -70,7 +71,7 @@ fun AddEditContent(
             onClick = { viewModel.onSaveButtonClick() }) {
             Icon(
                 painterResource(id = R.drawable.baseline_save_24),
-                contentDescription = "Add",
+                contentDescription = stringResource(id = R.string.saveButtonDescription),
                 tint = Color.White
             )
         }
@@ -83,16 +84,18 @@ fun AddEditContent(
                 .fillMaxSize()
         ) {
             Header(onBackClick)
-            TitleTextField(stateTitle) { viewModel.onTitleChange(it) }
-            BodyTextField(stateBody) { viewModel.onBodyChange(it) }
+            TitleTextField(state) { viewModel.onTitleChange(it) }
+            BodyTextField(state) { viewModel.onBodyChange(it) }
         }
     }
     val context = LocalContext.current
-    if (stateSave.value != null) LaunchedEffect(stateSave.value) {
-        when (stateSave.value) {
+    if (state.value.saveState != null) LaunchedEffect(state.value) {
+        when (state.value.saveState) {
             is SaveNoteState.Failure -> {
                 Toast.makeText(
-                    context, (stateSave.value as SaveNoteState.Failure).message, Toast.LENGTH_SHORT
+                    context,
+                    (state.value.saveState as SaveNoteState.Failure).message,
+                    Toast.LENGTH_SHORT
                 ).show()
             }
 
@@ -133,9 +136,9 @@ fun Header(onBackClick: () -> Unit) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TitleTextField(stateTitle: State<String>, onTitleChange: (String) -> Unit) {
+fun TitleTextField(state: State<AddEditState>, onTitleChange: (String) -> Unit) {
     TextField(
-        value = stateTitle.value,
+        value = state.value.title,
         singleLine = true,
         onValueChange = onTitleChange,
         label = { Text(text = "Title...") },
@@ -146,18 +149,22 @@ fun TitleTextField(stateTitle: State<String>, onTitleChange: (String) -> Unit) {
             focusedLabelColor = Color.Black,
             unfocusedLabelColor = Gray
         ),
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .testTag(TITlE_TEXT_FIELD),
         textStyle = TextStyle(color = IconColor, fontSize = 18.sp, fontWeight = FontWeight.Bold)
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BodyTextField(stateBody: State<String>, onBodyChange: (String) -> Unit) {
-    TextField(value = stateBody.value,
+fun BodyTextField(state: State<AddEditState>, onBodyChange: (String) -> Unit) {
+    TextField(value = state.value.body,
         textStyle = TextStyle(),
         onValueChange = onBodyChange,
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .testTag(BODY_TEXT_FIELD),
         colors = TextFieldDefaults.textFieldColors(
             containerColor = TransparentColor,
             unfocusedIndicatorColor = TransparentColor,

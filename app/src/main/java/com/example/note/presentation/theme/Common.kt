@@ -8,6 +8,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -20,11 +21,12 @@ fun NotedText(modifier: Modifier = Modifier){
 }
 
 @Composable
-fun CustomRadioButton(modifier:Modifier,selected: Boolean ,onClick: () ->Unit,textId: Int){
+fun CustomRadioButton(modifier:Modifier,selected: Boolean ,onClick: () ->Unit,textId: Int,testTag: String){
     Row(modifier){
-     RadioButton(selected = selected, onClick = onClick, colors =  RadioButtonDefaults.colors(
+     RadioButton(selected = selected, modifier = Modifier.testTag(testTag) ,onClick = onClick, colors =  RadioButtonDefaults.colors(
          selectedColor = IconColor,
          unselectedColor = Gray
+
      ))
         Text(text = stringResource(id = textId), textAlign = TextAlign.Center, modifier = Modifier.align(CenterVertically))
     }

@@ -45,7 +45,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -64,11 +67,18 @@ import com.example.note.presentation.theme.PaleCyan
 import androidx.navigation.NavHostController
 import com.example.note.presentation.add_edit_screen.goToAddEditScreenScreen
 import com.example.note.presentation.utils.NULL_ID
+import com.example.note.presentation.utils.TestTags.ASCENDING_BUTTON
+import com.example.note.presentation.utils.TestTags.DESCENDING_BUTTON
+import com.example.note.presentation.utils.TestTags.NOTE
+import com.example.note.presentation.utils.TestTags.NOTES_LAZY
+import com.example.note.presentation.utils.TestTags.ORDER_SECTION
 
 
+@SuppressLint("SuspiciousIndentation")
 @Composable
 fun NotesScreen(viewModel: NotesViewModel = hiltViewModel(),navController: NavHostController) {
-    val state = viewModel.state.collectAsState()
+  val state = viewModel.state.collectAsState()
+
     NotesContent(state,navController,viewModel)
 }
 
@@ -87,7 +97,8 @@ fun NotesContent(
                 columns = GridCells.Fixed(2),
                 contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                modifier = Modifier.testTag(NOTES_LAZY)
             ) {
                 item(span = { GridItemSpan(2) }) {
                     Header(state = state, viewModel = viewModel)
@@ -117,7 +128,8 @@ fun FloatingButton(state: State<NotesState>,navController: NavHostController) {
             containerColor = IconColor,
             onClick = {navController.goToAddEditScreenScreen(NULL_ID) }) {
             Icon(
-                Icons.Default.Add, contentDescription = "Add", tint = Color.White
+                Icons.Default.Add, contentDescription = stringResource(id = R.string.addButtonDescription)
+                , tint = Color.White
             )
         }
     }
@@ -133,7 +145,7 @@ fun Header(state: State<NotesState>,  viewModel : NotesViewModel) {
 
         Icon(
             painterResource(id = R.drawable.baseline_sort_24),
-            contentDescription = "Sort",
+            contentDescription = stringResource(id = R.string.toggleDescription),
             tint = IconColor, modifier = Modifier
                 .constrainAs(toggleRef) {
                     top.linkTo(parent.top)
@@ -165,18 +177,24 @@ fun Header(state: State<NotesState>,  viewModel : NotesViewModel) {
 @Composable
 fun OrderSection(state: State<NotesState>, viewModel : NotesViewModel) {
     Row(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
+            .testTag(ORDER_SECTION),
     ) {
         CustomRadioButton(
             textId = R.string.ascending,
-            modifier = Modifier.weight(1F),
+            modifier = Modifier
+                .weight(1F)
+                , testTag = ASCENDING_BUTTON,
             onClick = {
                 viewModel.onClickAscendingButton()
             }, selected = state.value.ascendingButtonChecked
         )
         CustomRadioButton(
             textId = R.string.descending,
-            modifier = Modifier.weight(1F),
+            modifier = Modifier
+                .weight(1F)
+                ,testTag = DESCENDING_BUTTON,
             onClick = {
                viewModel.onClickDescendingButton()
             }, selected = !state.value.ascendingButtonChecked
@@ -190,7 +208,9 @@ fun NoteCard(modifier: Modifier, note: Note, navController: NavHostController, v
     Card(
         modifier = modifier
             .height(200.dp)
-            .background(Color.White).clickable { navController.goToAddEditScreenScreen(note.id) },
+            .background(Color.White)
+            .clickable { navController.goToAddEditScreenScreen(note.id) }
+            .testTag(NOTE),
         shape = AbsoluteRoundedCornerShape(10)
     ) {
         Column(
@@ -215,11 +235,13 @@ fun NoteCard(modifier: Modifier, note: Note, navController: NavHostController, v
                     fontSize = 14.sp,
                     color = MistyGray,
                     maxLines = 8,
-                    overflow = TextOverflow.Ellipsis, modifier = Modifier.zIndex(-1F).fillMaxSize()
+                    overflow = TextOverflow.Ellipsis, modifier = Modifier
+                        .zIndex(-1F)
+                        .fillMaxSize()
                 )
                 Icon(
                     Icons.Default.Delete,
-                    contentDescription = "Delete",
+                    contentDescription = stringResource(id = R.string.deleteButtonDescription),
 
                     modifier = Modifier
                         .size(30.dp)

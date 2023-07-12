@@ -1,6 +1,12 @@
 <resources>
     <string name="app_name">Note</string>
     <string name="noted">Noted</string>
+    <!-- NotesScreen-->
     <string name="ascending">Ascending</string>
     <string name="descending">Descending</string>
+    <!-- NotesScreen Description-->
+    <string name="toggleDescription">Sort</string>
+    <string name="addButtonDescription">Add</string>
+    <string name="saveButtonDescription">Save</string>
+   <string name="deleteButtonDescription">Delete</string>
 </resources>

@@ -7,7 +7,7 @@ import com.example.data.local.daos.NoteDao
 import com.example.data.local.model.NoteEntity
 
 
-@Database(entities = [NoteEntity::class], version = 1)
+@Database(entities = [NoteEntity::class], version = 1, autoMigrations = [])
 abstract class LocalDatabase : RoomDatabase() {
     abstract fun getNoteDao(): NoteDao
 }

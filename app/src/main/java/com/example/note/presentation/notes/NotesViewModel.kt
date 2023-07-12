@@ -5,8 +5,10 @@ import androidx.lifecycle.viewModelScope
 import com.example.domain.model.Note
 import com.example.domain.use_case.DeleteNoteUseCase
 import com.example.domain.use_case.GetAllNotesUseCase
+import com.example.domain.util.OrderType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -23,28 +25,22 @@ class NotesViewModel @Inject constructor(
 
     val state = _state.asStateFlow()
 
-    init {
-        viewModelScope.launch(Dispatchers.IO) {
-            getAllNotesUseCase().collect { notes ->
-                _state.update {
-                    it.copy(notes = notes)
-                }
-            }
+    private var getNotesJob: Job? = null
 
-        }
+    init {
+        getAllNotes()
     }
 
 
     fun onClickDescendingButton() {
+        getAllNotes(OrderType.DESCENDING)
         _state.update {
-            it.copy(
-                notes = it.notes.sortedByDescending { it.timeMillis },
-                ascendingButtonChecked = false
-            )
+            it.copy(ascendingButtonChecked = false)
         }
     }
 
     fun onClickAscendingButton() {
+        getAllNotes(OrderType.ASCENDING)
         _state.update {
             it.copy(
                 notes = it.notes.sortedBy { it.timeMillis }, ascendingButtonChecked = true
@@ -56,7 +52,6 @@ class NotesViewModel @Inject constructor(
         _state.update { it.copy(isOrderSectionVisible = !it.isOrderSectionVisible) }
     }
 
-
     fun onLazyScrolling(isStop: Boolean) {
         _state.update { it.copy(isAddButtonVisible = !isStop) }
     }
@@ -66,6 +61,17 @@ class NotesViewModel @Inject constructor(
             deleteNoteUseCase(note)
         }
     }
+    private fun getAllNotes(orderType: OrderType? = null) {
+        getNotesJob?.cancel()
+        getNotesJob = viewModelScope.launch(Dispatchers.IO) {
+            getAllNotesUseCase(orderType).collect { notes ->
+                _state.update {
+                    it.copy(notes = notes)
+                }
+            }
+        }
+    }
+
 }
 
 

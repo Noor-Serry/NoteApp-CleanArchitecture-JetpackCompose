@@ -4,7 +4,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.domain.model.Note
-import com.example.domain.model.SaveNoteState
 import com.example.domain.use_case.AddNoteUseCase
 import com.example.domain.use_case.EditNoteUseCase
 import com.example.domain.use_case.GetNoteByIdUseCase
@@ -25,14 +24,9 @@ class AddEditViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val _stateTitle = MutableStateFlow("")
-    val stateTitle = _stateTitle.asStateFlow()
+    private val _state = MutableStateFlow(AddEditState())
+    val state = _state.asStateFlow()
 
-    private val _stateBody = MutableStateFlow("")
-    val stateBody = _stateBody.asStateFlow()
-
-    private val _stateSave = MutableStateFlow<SaveNoteState?>(null)
-    val stateSave = _stateSave.asStateFlow()
 
     private val args = AddEditScreenArgs(savedStateHandle)
 
@@ -42,18 +36,17 @@ class AddEditViewModel @Inject constructor(
     }
 
     fun onTitleChange(newTitle: String) {
-        _stateTitle.update { newTitle }
+        _state.update { it.copy(title = newTitle) }
     }
 
     fun onBodyChange(newBody: String) {
-        _stateBody.update { newBody }
+        _state.update { it.copy(body = newBody) }
     }
 
     private fun getNoteById(id: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            val note = getNoteByIdUseCase(id)
-            _stateTitle.update { note!!.title }
-            _stateBody.update { note!!.body }
+            val note = getNoteByIdUseCase(id)!!
+            _state.update { it.copy(title = note.title, body = note.body) }
         }
     }
 
@@ -63,20 +56,20 @@ class AddEditViewModel @Inject constructor(
                 addNoteUseCase(
                     Note(
                         id = args.noteId,
-                        title = _stateTitle.value,
-                        body = _stateBody.value,
+                        title = _state.value.title,
+                        body = _state.value.body,
                         timeMillis = System.currentTimeMillis()
                     )
                 )
             else editNoteUseCase(
                 Note(
                     id = args.noteId!!,
-                    title = _stateTitle.value,
-                    body = _stateBody.value,
+                    title = _state.value.title,
+                    body = _state.value.body,
                     timeMillis = System.currentTimeMillis()
                 )
             )
-            _stateSave.update { result }
+            _state.update { it.copy(saveState = result) }
         }
 
 
