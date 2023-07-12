@@ -15,11 +15,18 @@ https://github.com/Noor-Serry/NoteApp-CleanArchitecture-JetpackCompose/assets/95
 <h3>
   references
  <ul>
-  <li>Clean Architecture : https://www.youtube.com/watch?v=kSGNQbEiDFA&t=2544s </li>
-  <li>Clean ArchitectureNote App (https://youtu.be/8YPXv7xKh2w)</li>
+  <li>
+    <a href = "https://www.youtube.com/watch?v=kSGNQbEiDFA&t=2544s">Clean Architecture </a>
+    </li>
+   
+  <li>
+    <a href = "https://youtu.be/8YPXv7xKh2w">Clean ArchitectureNote App</a>
+ </li>
+   <li>
+    <a href = "https://youtu.be/nDCCwyS0_MQ">Note App Testing</a>
+ </li>
 </ul>
 </h3>
-
 
 
 
