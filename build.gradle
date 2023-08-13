@@ -11,6 +11,7 @@ buildscript {
         dependencies {
             // other plugins...
             classpath 'com.google.dagger:hilt-android-gradle-plugin:2.46.1'
+            classpath("de.mannodermaus.gradle.plugins:android-junit5:1.8.2.1")
         }
     }
 }

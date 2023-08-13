@@ -7,11 +7,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.AbsoluteRoundedCornerShape
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -65,25 +64,14 @@ fun AddEditContent(
 ) {
 
 
-    Scaffold(floatingActionButton = {
-        FloatingActionButton(shape = AbsoluteRoundedCornerShape(50),
-            containerColor = IconColor,
-            onClick = { viewModel.onSaveButtonClick() }) {
-            Icon(
-                painterResource(id = R.drawable.baseline_save_24),
-                contentDescription = stringResource(id = R.string.saveButtonDescription),
-                tint = Color.White
-            )
-        }
-    }) {
-
+    Scaffold() {
 
         Column(
             Modifier
                 .padding(16.dp)
                 .fillMaxSize()
         ) {
-            Header(onBackClick)
+            Header(onBackClick,viewModel::onSaveButtonClick)
             TitleTextField(state) { viewModel.onTitleChange(it) }
             BodyTextField(state) { viewModel.onBodyChange(it) }
         }
@@ -111,17 +99,18 @@ fun AddEditContent(
 }
 
 @Composable
-fun Header(onBackClick: () -> Unit) {
+fun Header(onBackClick: () -> Unit,onSaveClick: () -> Unit) {
     ConstraintLayout(
         Modifier.fillMaxWidth()
     ) {
-        val (backRef, notedRef) = createRefs()
+        val (backRef, notedRef,saveRef) = createRefs()
         Icon(Icons.Default.ArrowBack,
             contentDescription = "Sort",
             tint = IconColor,
             modifier = Modifier
                 .constrainAs(backRef) {
                     top.linkTo(parent.top)
+                    bottom.linkTo(parent.bottom)
                     start.linkTo(parent.start)
                 }
                 .clickable { onBackClick() })
@@ -129,8 +118,21 @@ fun Header(onBackClick: () -> Unit) {
         NotedText(modifier = Modifier.constrainAs(notedRef) {
             top.linkTo(parent.top)
             start.linkTo(backRef.end)
-            end.linkTo(parent.end)
+            end.linkTo(saveRef.start)
         })
+        Icon( painterResource(id = R.drawable.baseline_save_24),
+            contentDescription = stringResource(id = R.string.saveButtonDescription),
+            tint = IconColor,
+            modifier = Modifier.size(32.dp)
+                .constrainAs(saveRef) {
+                    top.linkTo(parent.top)
+                    bottom.linkTo(parent.bottom)
+                    end.linkTo(parent.end)
+                }
+                .clickable { onSaveClick() }
+        )
+
+
     }
 }
 

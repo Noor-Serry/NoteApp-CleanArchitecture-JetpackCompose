@@ -4,16 +4,17 @@ import com.example.domain.model.Note
 import com.example.domain.model.SaveNoteState
 import com.example.domain.repository.FakeNoteRepository
 import com.google.common.truth.Truth.assertThat
-import kotlinx.coroutines.runBlocking
-import org.junit.Before
-import org.junit.Test
+import kotlinx.coroutines.test.runTest
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+
 
 class EditNoteUseCaseTest {
 
     private lateinit var editNoteUseCase: EditNoteUseCase
     private lateinit var fakeNoteRepository: FakeNoteRepository
 
-    @Before
+    @BeforeEach
     fun setUp() {
         fakeNoteRepository = FakeNoteRepository()
         editNoteUseCase = EditNoteUseCase(fakeNoteRepository)
@@ -21,7 +22,7 @@ class EditNoteUseCaseTest {
 
     @Test
     fun `EditNoteUseCase()  With non empty title and non empty body Then return Success`() =
-        runBlocking {
+        runTest {
 
             val oldNote = Note(1, "test", 1, "test")
             fakeNoteRepository.insertNote(oldNote)
@@ -37,7 +38,7 @@ class EditNoteUseCaseTest {
 
     @Test
     fun `EditNoteUseCase() With empty title Then return Failure`() =
-        runBlocking {
+        runTest {
 
             val oldNote = Note(1, "test", 1, "test")
             fakeNoteRepository.insertNote(oldNote)
@@ -50,7 +51,7 @@ class EditNoteUseCaseTest {
 
     @Test
     fun `EditNoteUseCase() With empty body Then return Failure`() =
-        runBlocking {
+        runTest {
 
             val oldNote = Note(1, "test", 1, "test")
             fakeNoteRepository.insertNote(oldNote)
@@ -63,7 +64,7 @@ class EditNoteUseCaseTest {
 
     @Test
     fun `EditNoteUseCase() With  empty body and empty title Then return Failure`() =
-        runBlocking {
+        runTest {
 
             val oldNote = Note(1, "test", 1, "test")
             fakeNoteRepository.insertNote(oldNote)

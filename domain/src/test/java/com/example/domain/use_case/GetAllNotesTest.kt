@@ -6,28 +6,29 @@ import com.example.domain.util.OrderType
 
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
-import org.junit.Before
-import org.junit.Test
+import kotlinx.coroutines.test.runTest
+
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
 class GetAllNotesTest {
     lateinit var getAllNotesUseCase: GetAllNotesUseCase
     lateinit var fakeNoteRepository: FakeNoteRepository
 
-    @Before
+    @BeforeEach
     fun setUp() {
         fakeNoteRepository = FakeNoteRepository()
         getAllNotesUseCase = GetAllNotesUseCase(fakeNoteRepository)
     }
 
     @Test
-    fun `GetAllNotes() With empty list Then return  empty list`() = runBlocking {
+    fun `GetAllNotes() With empty list Then return  empty list`() = runTest {
         val result = getAllNotesUseCase.invoke().first()
         assertThat(result).isEmpty()
     }
 
     @Test
-    fun `GetAllNotes() With non empty list Then return  non empty list`() = runBlocking {
+    fun `GetAllNotes() With non empty list Then return  non empty list`() = runTest {
 
         val notes = mutableListOf<Note>()
         notes.add(Note(1, "title", 1, ""))
@@ -39,14 +40,14 @@ class GetAllNotesTest {
     }
 
     @Test
-    fun `GetAllNotes() in Ascending With empty list Then return  empty list`() = runBlocking {
+    fun `GetAllNotes() in Ascending With empty list Then return  empty list`() = runTest {
         val result = getAllNotesUseCase.invoke(OrderType.ASCENDING).first()
         assertThat(result).isEmpty()
     }
 
     @Test
     fun `GetAllNotes() in ascending by timeMillis With random notes Then return  ascending notes`() =
-        runBlocking {
+        runTest {
 
             val notes = mutableListOf<Note>()
             notes.add(Note(1, "title", 2, ""))
@@ -62,14 +63,14 @@ class GetAllNotesTest {
         }
 
     @Test
-    fun `GetAllNotes() in descending With empty list Then return  empty list`() = runBlocking {
+    fun `GetAllNotes() in descending With empty list Then return  empty list`() = runTest {
         val result = getAllNotesUseCase.invoke(OrderType.DESCENDING).first()
         assertThat(result).isEmpty()
     }
 
     @Test
     fun `GetAllNotes() in descending by timeMillis With random notes Then return  ascending notes`() =
-        runBlocking {
+        runTest {
 
             val notes = mutableListOf<Note>()
             notes.add(Note(1, "title", 2, ""))

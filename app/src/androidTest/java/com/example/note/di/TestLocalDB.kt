@@ -18,7 +18,9 @@ class TestLocalDB() {
     @Singleton
     @Provides
     fun provideLocalDB(app: Application): LocalDatabase {
-       return Room.inMemoryDatabaseBuilder(app, LocalDatabase::class.java).build()
+       return Room
+           .inMemoryDatabaseBuilder(app, LocalDatabase::class.java)
+           .build()
 
     }
 

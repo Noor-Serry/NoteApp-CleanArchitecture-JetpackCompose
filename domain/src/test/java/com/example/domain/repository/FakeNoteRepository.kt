@@ -21,14 +21,12 @@ class FakeNoteRepository : NoteRepository {
     override suspend fun insertNote(note: Note) {
         notes.add(note)
     }
-
     override suspend fun updateNote(note: Note) {
          notes.find { it.id == note.id }?.let {
             val noteIndex = notes.indexOf(it)
                  notes.removeAt(noteIndex)
                  notes.add(noteIndex, note)
         }
-
     }
 
 }

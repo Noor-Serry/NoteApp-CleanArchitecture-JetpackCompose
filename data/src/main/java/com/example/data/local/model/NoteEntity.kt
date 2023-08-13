@@ -8,7 +8,7 @@ import com.example.domain.model.Note
 
 
 @Entity(tableName = "NoteEntity")
-data class NoteEntity(@PrimaryKey(autoGenerate = true)var id:Int =0,val title: String, val timeMillis: Long, val body: String)
+data class NoteEntity(@PrimaryKey(autoGenerate = true)var id:Int = 0 ,val title: String, val timeMillis: Long, val body: String)
 
 fun NoteEntity.toNote(): Note = Note(id, title, timeMillis, body)
 
