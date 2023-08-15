@@ -1,15 +1,15 @@
 package com.example.note.presentation.add_edit_screen
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.domain.model.Note
+import com.example.domain.model.SaveNoteState
 import com.example.domain.use_case.AddNoteUseCase
 import com.example.domain.use_case.EditNoteUseCase
 import com.example.domain.use_case.GetNoteByIdUseCase
 import com.example.note.presentation.utils.NULL_ID
+import com.example.note.presentation.utils.dispatcher.DispatcherProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -21,14 +21,12 @@ class AddEditViewModel @Inject constructor(
     private val getNoteByIdUseCase: GetNoteByIdUseCase,
     private val editNoteUseCase: EditNoteUseCase,
     private val addNoteUseCase: AddNoteUseCase,
-    private val savedStateHandle: SavedStateHandle
+    private val args: AddEditScreenArgs,
+    private val Dispatchers : DispatcherProvider
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(AddEditState())
     val state = _state.asStateFlow()
-
-
-    private val args = AddEditScreenArgs(savedStateHandle)
 
     init {
         if (args.noteId != NULL_ID)
@@ -69,7 +67,9 @@ class AddEditViewModel @Inject constructor(
                     timeMillis = System.currentTimeMillis()
                 )
             )
-            _state.update { it.copy(saveState = result) }
+            if (result is SaveNoteState.Success)
+            _state.update { it.copy(isSuccess = true) }
+            else _state.update { it.copy(errorMessage = (result as SaveNoteState.Failure).message) }
         }
 
 

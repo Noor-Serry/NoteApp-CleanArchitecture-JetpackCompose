@@ -33,7 +33,6 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.example.domain.model.SaveNoteState
 import com.example.note.R
 import com.example.note.presentation.theme.Gray
 import com.example.note.presentation.theme.IconColor
@@ -77,24 +76,18 @@ fun AddEditContent(
         }
     }
     val context = LocalContext.current
-    if (state.value.saveState != null) LaunchedEffect(state.value) {
-        when (state.value.saveState) {
-            is SaveNoteState.Failure -> {
+     LaunchedEffect(state.value.errorMessage) {
+         if(!state.value.errorMessage.isNullOrEmpty())
                 Toast.makeText(
                     context,
-                    (state.value.saveState as SaveNoteState.Failure).message,
+                    state.value.errorMessage,
                     Toast.LENGTH_SHORT
                 ).show()
             }
-
-            SaveNoteState.Success -> {
-                onBackClick()
-            }
-
-            else -> {}
-        }
+    LaunchedEffect(key1 = state.value.isSuccess){
+        if (state.value.isSuccess)
+            onBackClick()
     }
-
 
 }
 
@@ -123,7 +116,8 @@ fun Header(onBackClick: () -> Unit,onSaveClick: () -> Unit) {
         Icon( painterResource(id = R.drawable.baseline_save_24),
             contentDescription = stringResource(id = R.string.saveButtonDescription),
             tint = IconColor,
-            modifier = Modifier.size(32.dp)
+            modifier = Modifier
+                .size(32.dp)
                 .constrainAs(saveRef) {
                     top.linkTo(parent.top)
                     bottom.linkTo(parent.bottom)

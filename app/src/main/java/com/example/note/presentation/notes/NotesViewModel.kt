@@ -6,8 +6,8 @@ import com.example.domain.model.Note
 import com.example.domain.use_case.DeleteNoteUseCase
 import com.example.domain.use_case.GetAllNotesUseCase
 import com.example.domain.util.OrderType
+import com.example.note.presentation.utils.dispatcher.DispatcherProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,7 +18,8 @@ import javax.inject.Inject
 @HiltViewModel
 class NotesViewModel @Inject constructor(
     private val getAllNotesUseCase: GetAllNotesUseCase,
-    private val deleteNoteUseCase: DeleteNoteUseCase
+    private val deleteNoteUseCase: DeleteNoteUseCase,
+    private val Dispatchers : DispatcherProvider
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(NotesState())
@@ -42,9 +43,7 @@ class NotesViewModel @Inject constructor(
     fun onClickAscendingButton() {
         getAllNotes(OrderType.ASCENDING)
         _state.update {
-            it.copy(
-                notes = it.notes.sortedBy { it.timeMillis }, ascendingButtonChecked = true
-            )
+            it.copy(ascendingButtonChecked = true)
         }
     }
 

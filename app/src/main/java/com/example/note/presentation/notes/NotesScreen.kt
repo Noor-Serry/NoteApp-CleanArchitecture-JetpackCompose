@@ -66,7 +66,6 @@ import com.example.note.presentation.theme.OffWhite
 import com.example.note.presentation.theme.PaleCyan
 import androidx.navigation.NavHostController
 import com.example.note.presentation.add_edit_screen.goToAddEditScreenScreen
-import com.example.note.presentation.utils.NULL_ID
 import com.example.note.presentation.utils.TestTags.ASCENDING_BUTTON
 import com.example.note.presentation.utils.TestTags.DESCENDING_BUTTON
 import com.example.note.presentation.utils.TestTags.NOTE
@@ -126,7 +125,7 @@ fun FloatingButton(state: State<NotesState>,navController: NavHostController) {
     ) {
         FloatingActionButton(shape = AbsoluteRoundedCornerShape(50),
             containerColor = IconColor,
-            onClick = {navController.goToAddEditScreenScreen(NULL_ID) }) {
+            onClick = {navController.goToAddEditScreenScreen() }) {
             Icon(
                 Icons.Default.Add, contentDescription = stringResource(id = R.string.addButtonDescription)
                 , tint = Color.White
